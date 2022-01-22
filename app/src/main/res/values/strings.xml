@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">Tipster</string>
+    <string name="bill">Bill $</string>
+    <string name="decrement">-</string>
+    <string name="tip">Tip %</string>
+    <string name="increment">+</string>
+    <string name="number_of_people">Number of people</string>
+    <string name="tip_label">Tip:</string>
+    <string name="total_label">Total:</string>
+</resources>
