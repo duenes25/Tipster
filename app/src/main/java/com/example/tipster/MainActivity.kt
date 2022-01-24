@@ -10,9 +10,9 @@ import java.math.BigDecimal
 import java.math.RoundingMode
 
 class MainActivity : AppCompatActivity() {
-    val mBillAmount = 0
-    val mTipAmount = 15
-    val mNumberOfPeople = 2
+    private var mBillAmount: Double = 0.00
+    private var mTipAmount : Int = 15
+    private var mNumberOfPeople : Int = 2
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -36,90 +36,108 @@ class MainActivity : AppCompatActivity() {
         val tipValue = findViewById<TextView>(R.id.tip_value)
         // Get a handle on the totalValue TextView Field
         val totalValue = findViewById<TextView>(R.id.total_value)
-        // Whenever the button is tapped we will get the tipAmount value,
-        // increment it by one, and set it back as the tip amount
+
+        // Whenever the button is tapped we will get the [mTipAmount] value,
+        // increment it by one, and set it back as the tip amount String
         incrementTipButton.setOnClickListener {
-             val incrementedTip = Integer.parseInt(tipAmount.text.toString().trim()) + 1
-            tipAmount.setText(incrementedTip.toString())
+            mTipAmount ++
+            tipAmount.setText(mTipAmount.toString())
         }
 
-        // Whenever the button is tapped we will get the tipAmount value,
-        // decrement it by one, and set it back as the tip amount
+        // Whenever the button is tapped we will get the [mTipAmount] value,
+        // decrement it by one, and set it back as the tip amount String
         decrementTipButton.setOnClickListener {
-            val decrementedTip = Integer.parseInt(tipAmount.text.toString().trim()) - 1
-            tipAmount.setText(decrementedTip.toString())
+            mTipAmount --
+            tipAmount.setText(mTipAmount.toString())
         }
 
-        // Whenever the button is tapped we will get the numberOfPeople value,
-        // increment it by one, and set it back as the number of people.
+        // Whenever the button is tapped we will get the [mNumberOfPeople] value,
+        // increment it by one, and set it back as the number of people String
         incrementPeopleButton.setOnClickListener {
-            val incrementedPeople = Integer.parseInt(numberOfPeople.text.toString().trim()) + 1
-            numberOfPeople.setText(incrementedPeople.toString())
+            mNumberOfPeople ++
+            numberOfPeople.setText(mNumberOfPeople.toString())
         }
 
-        // Whenever the button is tapped we will get the numberOfPeople value,
-        // increment it by one, and set it back as the number of people.
+        // Whenever the button is tapped we will get the [mNumberOfPeople] value,
+        // increment it by one, and set it back as the number of people String
         decrementPeopleButton.setOnClickListener {
-            val decrementPeople = Integer.parseInt(numberOfPeople.text.toString().trim()) - 1
-            if (decrementPeople > 0){
-                numberOfPeople.setText(decrementPeople.toString())
+            mNumberOfPeople --
+            //We don't want to divide by zero,
+            //so catching any people less than 1, and resetting to 1
+            if (mNumberOfPeople < 1){
+                mNumberOfPeople = 1
             }
+            numberOfPeople.setText(mNumberOfPeople.toString())
         }
 
-        //Whenever the bill amount is changed, we will recalculate the tip and total
+        //Whenever the bill amount is changed, we will store it, and recalculate the tip and total
         billAmount.addTextChangedListener { newBill ->
-            val bill = getBigDecimalAmount(newBill.toString().trim(), 0)
-            val tip = getBigDecimalAmount(tipAmount.text.toString().trim(), 0)
-            val people = getBigDecimalAmount(numberOfPeople.text.toString().trim(), 1)
-            val tipPerPerson = calculateTipPerPerson(bill, tip, people)
-            val totalPerPerson = calculateTotalPerPerson(bill, tip, people)
-            tipValue.text = "$tipPerPerson"
-            totalValue.text = "$totalPerPerson"
+            // Get the new value
+            val newBillDouble = newBill.toString().trim().toDoubleOrNull()
+            // Check to make sure it is not null
+            if(newBillDouble != null){
+                // It was not null, store it
+                mBillAmount = newBillDouble
+            }
+            else{
+                // It was null, display previous value
+                billAmount.setText(mBillAmount.toString())
+            }
+            //Set the calculated values to display
+            tipValue.text = "${calculateTipPerPerson()}"
+            totalValue.text = "${calculateTotalPerPerson()}"
         }
 
-        //Whenever the tip amount is changed, we will recalculate the tip and total
+        //Whenever the tip amount is changed, we will store it, and recalculate the tip and total
         tipAmount.addTextChangedListener { newTip ->
-            val bill = getBigDecimalAmount(billAmount.text.toString().trim(), 0)
-            val tip = getBigDecimalAmount(newTip.toString().trim(), 0)
-            val people = getBigDecimalAmount(numberOfPeople.text.toString().trim(), 1)
-            val tipPerPerson = calculateTipPerPerson(bill, tip, people)
-            val totalPerPerson = calculateTotalPerPerson(bill, tip, people)
-            tipValue.text = "$tipPerPerson"
-            totalValue.text = "$totalPerPerson"
+            // Get the new value
+            val newTipInteger = newTip.toString().trim().toIntOrNull()
+            // Check to make sure it is not null
+            if(newTipInteger != null){
+                // It was not null, store it
+                mTipAmount = newTipInteger
+            }
+            else{
+                // It was null, display previous value
+                tipAmount.setText(mTipAmount.toString())
+            }
+            //Set the calculated values to display
+            tipValue.text = "${calculateTipPerPerson()}"
+            totalValue.text = "${calculateTotalPerPerson()}"
         }
 
-        //Whenever the number of people is changed, we will recalculate the tip and total
+        //Whenever the number of people is changed, we will store it, and recalculate the tip and total
         numberOfPeople.addTextChangedListener { newPeopleValue ->
-            val bill = getBigDecimalAmount(billAmount.text.toString().trim(), 0)
-            val tip = getBigDecimalAmount(tipAmount.text.toString().trim(), 0)
-            val people = getBigDecimalAmount(newPeopleValue.toString().trim(), 1)
-            val tipPerPerson = calculateTipPerPerson(bill, tip, people)
-            val totalPerPerson = calculateTotalPerPerson(bill, tip, people)
-            tipValue.text = "$tipPerPerson"
-            totalValue.text = "$totalPerPerson"
+            // Get the new value
+            val newPeopleInteger = newPeopleValue.toString().trim().toIntOrNull()
+            // Check to make sure it is not null
+            if(newPeopleInteger != null){
+                // It was not null, store it
+                mNumberOfPeople = newPeopleInteger
+            }
+            else{
+                // It was null, display previous value
+                numberOfPeople.setText(mNumberOfPeople.toString())
+            }
+            //Set the calculated values to display
+            tipValue.text = "${calculateTipPerPerson()}"
+            totalValue.text = "${calculateTotalPerPerson()}"
         }
 
     }
 
     /**
-     * This method will be used to calculate the Tip per person based on the following input parameters
-     * @param [bill] - The Total bill of the party
-     * @param [tip] - The amount of tip that the user would like to give
-     * @param [people] - The number of people that will split the bill
+     * This method will be used to calculate the Tip per person
      */
-    private fun calculateTipPerPerson(bill: BigDecimal, tip: BigDecimal, people: BigDecimal): BigDecimal {
-        return ((bill * (tip.divide(BigDecimal(100)))) / people).setScale(2, RoundingMode.HALF_EVEN)
+    private fun calculateTipPerPerson(): BigDecimal {
+        return ((mBillAmount.toBigDecimal() * (mTipAmount.toBigDecimal().divide(BigDecimal(100)))) / mNumberOfPeople.toBigDecimal()).setScale(2, RoundingMode.HALF_EVEN)
     }
 
-    private fun calculateTotalPerPerson(bill: BigDecimal, tip: BigDecimal, people: BigDecimal) : BigDecimal{
-        return ((bill * (tip.divide(BigDecimal(100)))) + bill / people).setScale(2, RoundingMode.HALF_EVEN)
-    }
-    private fun getBigDecimalAmount(stringValue: String?, defaultValue: Int): BigDecimal{
-        return if (stringValue?.isNotEmpty() == true){
-            stringValue.toBigDecimal()
-        } else{
-            BigDecimal(defaultValue)
-        }
+    /**
+     * This method will be used to calculate the Tip per person
+     */
+    private fun calculateTotalPerPerson() : BigDecimal{
+        return ((mBillAmount.toBigDecimal() * (mTipAmount.toBigDecimal().divide(BigDecimal(100)))) + mBillAmount.toBigDecimal() / mNumberOfPeople.toBigDecimal()).setScale(2, RoundingMode.HALF_EVEN)
     }
 
 }
