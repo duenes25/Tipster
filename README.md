@@ -1,8 +1,8 @@
 # Tipster
 
-## Title: How To Create a Tip Calculator on Android
+### Title: How To Create a Tip Calculator on Android
 
-**Audience Level:** Beginner
+**Audience Level:** Beginner  
 **Style:** How To  
 **Prerequisites:** Latest version of Android Studio, basic Android and Kotlin Knowledge.  
 **Sample app name:** Tipster  
